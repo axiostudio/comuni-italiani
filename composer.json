@@ -1,0 +1,40 @@
+{
+    "name": "axiostudio/comuni-italiani",
+    "description": "Pacchetto Laravel per la gestione dei comuni italiani",
+    "keywords": [
+        "axiostudio",
+        "comuni"
+    ],
+    "homepage": "https://github.com/axiostudio/comuni-italiani",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Axio Studio",
+            "email": "info@axio.studio",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0|^8.1|^8.2|^8.3",
+        "illuminate/support": "^8.0|^9.0|^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Axiostudio\\Comuni\\": "src"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Axiostudio\\Comuni\\ComuniServiceProvider"
+            ],
+            "aliases": {
+                "comuni": "Axiostudio\\Comuni\\ComuniFacade"
+            }
+        }
+    }
+}
