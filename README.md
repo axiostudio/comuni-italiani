@@ -36,6 +36,14 @@ Per completare l'installazione è necessario avviare le migration ed eseguire:
 php artisan migrate && php artisan comuni:update
 ```
 
+## Personalizzazione
+
+È possibile esportare nel proprio progetto il file config e le migrations del package tramite:
+
+```bash
+php artisan vendor:publish --provider="Axiostudio\Comuni\ComuniServiceProvider"
+```
+
 ## Note
 
 Per supporto o bug utilizzare le Issue di Github, per collaborare invece è sufficente aprire un PR con le specifiche dell'integrazione eseguita.
