@@ -1,0 +1,90 @@
+[
+    {
+        "nome": "Misiliscemi",
+        "codice": "081025",
+        "zona": {
+            "codice": "5",
+            "nome": "Isole"
+        },
+        "regione": {
+            "codice": "19",
+            "nome": "Sicilia"
+        },
+        "provincia": {
+            "codice": "081",
+            "nome": "Trapani"
+        },
+        "sigla": "TP",
+        "codiceCatastale": "M432",
+        "cap": [
+            "91031"
+        ],
+        "popolazione": 8415
+    },
+    {
+        "nome": "Montecopiolo",
+        "codice": "099030",
+        "zona": {
+            "codice": "2",
+            "nome": "Nord-est"
+        },
+        "regione": {
+            "codice": "08",
+            "nome": "Emilia-Romagna"
+        },
+        "provincia": {
+            "codice": "099",
+            "nome": "Rimini"
+        },
+        "sigla": "RN",
+        "codiceCatastale": "F478",
+        "cap": [
+            "47868"
+        ],
+        "popolazione": 1035
+    },
+    {
+        "nome": "Sassofeltrio",
+        "codice": "099031",
+        "zona": {
+            "codice": "2",
+            "nome": "Nord-est"
+        },
+        "regione": {
+            "codice": "08",
+            "nome": "Emilia-Romagna"
+        },
+        "provincia": {
+            "codice": "099",
+            "nome": "Rimini"
+        },
+        "sigla": "RN",
+        "codiceCatastale": "I460",
+        "cap": [
+            "47869"
+        ],
+        "popolazione": 1366
+    },
+    {
+        "nome": "Sovizzo",
+        "codice": "024128",
+        "zona": {
+            "codice": "2",
+            "nome": "Nord-est"
+        },
+        "regione": {
+            "codice": "05",
+            "nome": "Veneto"
+        },
+        "provincia": {
+            "codice": "024",
+            "nome": "Vicenza"
+        },
+        "sigla": "VI",
+        "codiceCatastale": "M436",
+        "cap": [
+            "36049"
+        ],
+        "popolazione": 7454
+    }
+]
