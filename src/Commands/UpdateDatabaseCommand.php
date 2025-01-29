@@ -32,7 +32,7 @@ class UpdateDatabaseCommand extends Command
     {
         $this->info('Aggiornamento database comuni in corso...');
 
-        $this->truncateEntities();
+        // $this->truncateEntities();
 
         $this->seedZones();
         $this->seedRegions();
@@ -111,7 +111,7 @@ class UpdateDatabaseCommand extends Command
         $regionGroups = config('comuni.import.regions_groups');
 
         foreach ($regionGroups as $code => $name) {
-            Zone::firstOrCreate([
+            Zone::updateOrCreate([
                 'id'   => $this->formatId($code),
                 'name' => $name,
             ]);
@@ -126,7 +126,7 @@ class UpdateDatabaseCommand extends Command
 
         foreach ($regionsData as $city) {
             $zoneId = $this->getZoneIdByName($city->ripartizione_geografica);
-            Region::firstOrCreate([
+            Region::updateOrCreate([
                 'id'      => $this->formatId($city->codice_regione),
                 'name'    => $city->denominazione_regione,
                 'zone_id' => $this->formatId($zoneId),
@@ -141,7 +141,7 @@ class UpdateDatabaseCommand extends Command
         $provincesData = $this->getDataFromRemote('comuni.import.province_codes_file');
 
         foreach ($provincesData as $city) {
-            Province::firstOrCreate([
+            Province::updateOrCreate([
                 'id'        => $this->formatId($city->codice_sovracomunale),
                 'name'      => $city->denominazione_provincia,
                 'code'      => $city->sigla_provincia,
@@ -159,7 +159,7 @@ class UpdateDatabaseCommand extends Command
 
         foreach ($citiesData as $city) {
             $provinceId = $this->getProvinceCodeByProvinceLabel($provincesData, $city->sigla_provincia);
-            City::firstOrCreate([
+            City::updateOrCreate([
                 'id'          => $this->formatId($city->codice_istat),
                 'name'        => $city->denominazione_ita,
                 'code'        => $city->codice_belfiore,
@@ -175,7 +175,7 @@ class UpdateDatabaseCommand extends Command
         $data = $this->getDataFromRemote('comuni.import.zip_codes_file');
 
         foreach ($data as $city) {
-            Zip::create([
+            Zip::updateOrCreate([
                 'code'    => $city->cap,
                 'city_id' => $this->formatId($city->codice_istat),
             ]);
