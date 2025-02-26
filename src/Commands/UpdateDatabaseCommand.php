@@ -1,4 +1,5 @@
 <?php
+
 namespace Axiostudio\Comuni\Commands;
 
 use Axiostudio\Comuni\Models\City;
@@ -52,7 +53,7 @@ class UpdateDatabaseCommand extends Command
     protected function getDataFromRemote($key = 'comuni.data')
     {
         $url = config($key);
-        $this->info('Recupero i dati da ' . $url . '...');
+        $this->info('Recupero i dati da '.$url.'...');
         $data = file_get_contents($url);
         try {
             return json_decode($data);
@@ -82,13 +83,14 @@ class UpdateDatabaseCommand extends Command
     protected function getZoneIdByName($name = '')
     {
         $groupZones = config('comuni.import.regions_groups');
-        $id         = '';
+        $id = '';
         foreach ($groupZones as $key => $value) {
             if (strtolower($value) == strtolower($name)) {
                 $id = $key;
                 break;
             }
         }
+
         return $id;
     }
 
@@ -102,6 +104,7 @@ class UpdateDatabaseCommand extends Command
                 break;
             }
         }
+
         return $code;
     }
 
@@ -112,7 +115,7 @@ class UpdateDatabaseCommand extends Command
 
         foreach ($zones as $zone) {
             Zone::updateOrCreate([
-                'id'   => $this->formatId($zone->id),
+                'id' => $this->formatId($zone->id),
                 'name' => $zone->name,
             ]);
         }
@@ -127,8 +130,8 @@ class UpdateDatabaseCommand extends Command
         foreach ($regionsData as $city) {
             $zoneId = $this->getZoneIdByName($city->ripartizione_geografica);
             Region::updateOrCreate([
-                'id'      => $this->formatId($city->codice_regione),
-                'name'    => $city->denominazione_regione,
+                'id' => $this->formatId($city->codice_regione),
+                'name' => $city->denominazione_regione,
                 'zone_id' => $this->formatId($zoneId),
             ]);
         }
@@ -142,9 +145,9 @@ class UpdateDatabaseCommand extends Command
 
         foreach ($provincesData as $city) {
             Province::updateOrCreate([
-                'id'        => $this->formatId($city->codice_sovracomunale),
-                'name'      => $city->denominazione_provincia,
-                'code'      => $city->sigla_provincia,
+                'id' => $this->formatId($city->codice_sovracomunale),
+                'name' => $city->denominazione_provincia,
+                'code' => $city->sigla_provincia,
                 'region_id' => $this->formatId($city->codice_regione),
             ]);
         }
@@ -154,15 +157,15 @@ class UpdateDatabaseCommand extends Command
     protected function seedCities()
     {
         $this->info('Ricreo il database Città...');
-        $citiesData    = $this->getDataFromRemote('comuni.import.comuni_data_file');
+        $citiesData = $this->getDataFromRemote('comuni.import.comuni_data_file');
         $provincesData = $this->getDataFromRemote('comuni.import.province_codes_file');
 
         foreach ($citiesData as $city) {
             $provinceId = $this->getProvinceCodeByProvinceLabel($provincesData, $city->sigla_provincia);
             City::updateOrCreate([
-                'id'          => $this->formatId($city->codice_istat),
-                'name'        => $city->denominazione_ita,
-                'code'        => $city->codice_belfiore,
+                'id' => $this->formatId($city->codice_istat),
+                'name' => $city->denominazione_ita,
+                'code' => $city->codice_belfiore,
                 'province_id' => $this->formatId($provinceId),
             ]);
         }
@@ -176,7 +179,7 @@ class UpdateDatabaseCommand extends Command
 
         foreach ($data as $city) {
             Zip::updateOrCreate([
-                'code'    => $city->cap,
+                'code' => $city->cap,
                 'city_id' => $this->formatId($city->codice_istat),
             ]);
         }
