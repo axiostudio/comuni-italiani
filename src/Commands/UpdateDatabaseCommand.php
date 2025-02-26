@@ -108,12 +108,12 @@ class UpdateDatabaseCommand extends Command
     protected function seedZones()
     {
         $this->info('Ricreo il database Zone...');
-        $regionGroups = config('comuni.import.regions_groups');
+        $zones = config('comuni.import.zone_data_file');
 
-        foreach ($regionGroups as $code => $name) {
+        foreach ($zones as $zone) {
             Zone::updateOrCreate([
-                'id'   => $this->formatId($code),
-                'name' => $name,
+                'id'   => $this->formatId($zone->id),
+                'name' => $zone->name,
             ]);
         }
         $this->info('Database Zone completato!');
