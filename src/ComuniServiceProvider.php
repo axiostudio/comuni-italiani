@@ -31,7 +31,7 @@ class ComuniServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'comuni');
 
         $this->app->singleton('comuni', function () {
-            return new Comuni();
+            return new Comuni;
         });
     }
 }
