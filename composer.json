@@ -36,8 +36,5 @@
                 "comuni": "Axiostudio\\Comuni\\ComuniFacade"
             }
         }
-    },
-    "require-dev": {
-        "laravel/pint": "^1.21"
     }
 }
