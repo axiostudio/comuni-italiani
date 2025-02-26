@@ -1,5 +1,4 @@
 <?php
-
 namespace Axiostudio\Comuni\Commands;
 
 use Axiostudio\Comuni\Models\City;
@@ -33,15 +32,13 @@ class UpdateDatabaseCommand extends Command
     {
         $this->info('Aggiornamento database comuni in corso...');
 
-        $data = $this->getDataFromRemote();
+        // $this->truncateEntities();
 
-        $this->truncateEntities();
-
-        $this->seedZones($data);
-        $this->seedRegions($data);
-        $this->seedProvinces($data);
-        $this->seedCities($data);
-        $this->seedZips($data);
+        $this->seedZones();
+        $this->seedRegions();
+        $this->seedProvinces();
+        $this->seedCities();
+        $this->seedZips();
 
         $this->info('Aggiornamento database comuni completato!');
     }
@@ -52,10 +49,13 @@ class UpdateDatabaseCommand extends Command
         $this->call('cache:clear');
     }
 
-    protected function getDataFromRemote()
+    protected function getDataFromRemote($key = 'comuni.data')
     {
+        $url = config($key);
+        $this->info('Recupero i dati da ' . $url . '...');
+        $data = file_get_contents($url);
         try {
-            return json_decode(file_get_contents(config('comuni.data')));
+            return json_decode($data);
         } catch (\Exception $e) {
             $this->error('Non è stato possibile recuperare il file remoto per i dati, aggiorna la configurazione del repository e riprova.');
         }
@@ -79,70 +79,107 @@ class UpdateDatabaseCommand extends Command
         return (str_starts_with(0, $code)) ? substr($code, 1) : $code;
     }
 
-    protected function seedZones($data)
+    protected function getZoneIdByName($name = '')
     {
-        $this->info('Ricreo il database Zone...');
-
-        foreach ($data as $city) {
-            Zone::firstOrCreate([
-                'id' => $this->formatId($city->zona->codice),
-                'name' => $city->zona->nome,
-            ]);
-        }
-    }
-
-    protected function seedRegions($data)
-    {
-        $this->info('Ricreo il database Regioni...');
-
-        foreach ($data as $city) {
-            Region::firstOrCreate([
-                'id' => $this->formatId($city->regione->codice),
-                'name' => $city->regione->nome,
-                'zone_id' => $this->formatId($city->zona->codice),
-            ]);
-        }
-    }
-
-    protected function seedProvinces($data)
-    {
-        $this->info('Ricreo il database Provincie...');
-
-        foreach ($data as $city) {
-            Province::firstOrCreate([
-                'id' => $this->formatId($city->provincia->codice),
-                'name' => $city->provincia->nome,
-                'code' => $city->sigla,
-                'region_id' => $this->formatId($city->regione->codice),
-            ]);
-        }
-    }
-
-    protected function seedCities($data)
-    {
-        $this->info('Ricreo il database Città...');
-
-        foreach ($data as $city) {
-            City::firstOrCreate([
-                'id' => $this->formatId($city->codice),
-                'name' => $city->nome,
-                'code' => $city->codiceCatastale,
-                'province_id' => $this->formatId($city->provincia->codice),
-            ]);
-        }
-    }
-
-    protected function seedZips($data)
-    {
-        $this->info('Ricreo il database CAP...');
-
-        foreach ($data as $city) {
-            foreach ($city->cap as $zip) {
-                Zip::create([
-                    'code' => $zip,
-                    'city_id' => $this->formatId($city->codice),
-                ]);
+        $groupZones = config('comuni.import.regions_groups');
+        $id         = '';
+        foreach ($groupZones as $key => $value) {
+            if (strtolower($value) == strtolower($name)) {
+                $id = $key;
+                break;
             }
         }
+        return $id;
+    }
+
+    protected function getProvinceCodeByProvinceLabel($data = [], $label = '')
+    {
+
+        $code = '';
+        foreach ($data as $province) {
+            if (strtolower($province->sigla_provincia) == strtolower($label)) {
+                $code = $province->codice_sovracomunale;
+                break;
+            }
+        }
+        return $code;
+    }
+
+    protected function seedZones()
+    {
+        $this->info('Ricreo il database Zone...');
+        $regionGroups = config('comuni.import.regions_groups');
+
+        foreach ($regionGroups as $code => $name) {
+            Zone::updateOrCreate([
+                'id'   => $this->formatId($code),
+                'name' => $name,
+            ]);
+        }
+        $this->info('Database Zone completato!');
+    }
+
+    protected function seedRegions()
+    {
+        $this->info('Ricreo il database Regioni...');
+        $regionsData = $this->getDataFromRemote('comuni.import.regioni_data_file');
+
+        foreach ($regionsData as $city) {
+            $zoneId = $this->getZoneIdByName($city->ripartizione_geografica);
+            Region::updateOrCreate([
+                'id'      => $this->formatId($city->codice_regione),
+                'name'    => $city->denominazione_regione,
+                'zone_id' => $this->formatId($zoneId),
+            ]);
+        }
+        $this->info('Database Regioni completato!');
+    }
+
+    protected function seedProvinces()
+    {
+        $this->info('Ricreo il database Provincie...');
+        $provincesData = $this->getDataFromRemote('comuni.import.province_codes_file');
+
+        foreach ($provincesData as $city) {
+            Province::updateOrCreate([
+                'id'        => $this->formatId($city->codice_sovracomunale),
+                'name'      => $city->denominazione_provincia,
+                'code'      => $city->sigla_provincia,
+                'region_id' => $this->formatId($city->codice_regione),
+            ]);
+        }
+        $this->info('Database Provincie completato!');
+    }
+
+    protected function seedCities()
+    {
+        $this->info('Ricreo il database Città...');
+        $citiesData    = $this->getDataFromRemote('comuni.import.comuni_data_file');
+        $provincesData = $this->getDataFromRemote('comuni.import.province_codes_file');
+
+        foreach ($citiesData as $city) {
+            $provinceId = $this->getProvinceCodeByProvinceLabel($provincesData, $city->sigla_provincia);
+            City::updateOrCreate([
+                'id'          => $this->formatId($city->codice_istat),
+                'name'        => $city->denominazione_ita,
+                'code'        => $city->codice_belfiore,
+                'province_id' => $this->formatId($provinceId),
+            ]);
+        }
+        $this->info('Database Città completato!');
+    }
+
+    protected function seedZips()
+    {
+        $this->info('Ricreo il database CAP...');
+        $data = $this->getDataFromRemote('comuni.import.zip_codes_file');
+
+        foreach ($data as $city) {
+            Zip::updateOrCreate([
+                'code'    => $city->cap,
+                'city_id' => $this->formatId($city->codice_istat),
+            ]);
+        }
+        $this->info('Database CAP completato!');
     }
 }
