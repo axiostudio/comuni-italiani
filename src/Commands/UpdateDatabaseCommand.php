@@ -94,6 +94,7 @@ class UpdateDatabaseCommand extends Command
         foreach ($zones as $zone) {
             Zone::updateOrCreate([
                 'id' => $this->formatId($zone->id),
+            ],[
                 'name' => $zone->name,
             ]);
 
@@ -117,8 +118,9 @@ class UpdateDatabaseCommand extends Command
 
             Region::updateOrCreate([
                 'id' => $this->formatId($region->codice_regione),
-                'name' => $region->denominazione_regione,
                 'zone_id' => $this->formatId($zone->id),
+            ],[
+                'name' => $region->denominazione_regione,
             ]);
 
             $bar->advance();
@@ -139,9 +141,10 @@ class UpdateDatabaseCommand extends Command
         foreach ($provinces as $province) {
             Province::updateOrCreate([
                 'id' => $this->formatId($province->codice_sovracomunale),
-                'name' => $province->denominazione_provincia,
                 'code' => $province->sigla_provincia,
                 'region_id' => $this->formatId($province->codice_regione),
+            ],[
+                'name' => $province->denominazione_provincia,
             ]);
 
             $bar->advance();
@@ -164,9 +167,10 @@ class UpdateDatabaseCommand extends Command
            
             City::updateOrCreate([
                 'id' => $this->formatId($city->codice_istat),
-                'name' => $city->denominazione_ita,
                 'code' => $city->codice_belfiore,
                 'province_id' => $this->formatId($province->id),
+            ],[
+                'name' => $city->denominazione_ita,
             ]);
 
             $bar->advance();
