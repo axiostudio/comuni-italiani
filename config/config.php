@@ -3,9 +3,7 @@
 return [
     'ttl' => 60 * 24 * 7, // 1 week
     'route' => env('COMUNI_ROUTE', 'api/comuni'),
-    'middlewares' => [
-        'api',
-    ],
+    'middlewares' => explode(",",env('COMUNI_MIDDLEWARES',"api")),
     'import' => [
         'zone_data_file' =>  dirname(__DIR__).'/data/import/json/gi_zone.json',
         'regioni_data_file' => dirname(__DIR__).'/data/import/json/gi_regioni.json',

@@ -6,21 +6,21 @@ Questo package Laravel include delle API utili a fruire delle informazioni rigua
 
 ## Come funziona
 
-Grazie a comode API è possibile ottenere informazioni di CAP, città, provincie, regioni e zone d'Italia.
+Grazie a comode API è possibile ottenere informazioni di **CAP, città, provincie, regioni e zone d'Italia**.
 
-| Endpoint                     | Metodo | Descrizione                                                              | Parametri                                                            |
-| ---------------------------- | ------ | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| /api/comuni/zones            | GET    | Ritorna una lista di tutte le zone italiane                              | -                                                                    |
-| /api/comuni/zones/{id}       | GET    | Ritorna le informazioni di una determinata zona in base al suo "id"      | -                                                                    |
-| /api/comuni/regions          | GET    | Ritorna la lista di tutte le regioni italiane                            | -                                                                    |
-| /api/comuni/regions/{id}     | GET    | Ritorna le informazioni di una determinata regione in base al suo "id"   | -                                                                    |
-| /api/comuni/provinces        | GET    | Ritorna la lista di tutte le regioni italiane                            | q (querystring) - filtra per nome dopo il terzo carattere di ricerca |
-| /api/comuni/provinces/{id}   | GET    | Ritorna le informazioni di una determinata regione in base al suo "id"   | -                                                                    |
-| /api/comuni/provinces/{code} | GET    | Ritorna le informazioni di una determinata regione in base al suo "code" | -                                                                    |
-| /api/comuni/cities           | GET    | Ritorna la lista di tutte le città italiane                              | q (querystring) - filtra per nome dopo il terzo carattere di ricerca |
-| /api/comuni/cities/{id}      | GET    | Ritorna le informazioni di una determinata città in base al suo "id"     | -                                                                    |
-| /api/comuni/zips             | GET    | Ritorna la lista di tutti i CAP italiani                                 | q (querystring) - filtra per codice (5 caratteri numerici)           |
-| /api/comuni/zips/{id}        | GET    | Ritorna le informazioni di un determinato CAP in base al suo "id"        | -                                                                    |
+| Endpoint                       | Metodo | Descrizione                                                              | Parametri                                                            |
+| ------------------------------ | ------ | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| `/api/comuni/zones`            | GET    | Ritorna una lista di tutte le zone italiane                              | -                                                                    |
+| `/api/comuni/zones/{id}`       | GET    | Ritorna le informazioni di una determinata zona in base al suo "id"      | -                                                                    |
+| `/api/comuni/regions`          | GET    | Ritorna la lista di tutte le regioni italiane                            | -                                                                    |
+| `/api/comuni/regions/{id}`     | GET    | Ritorna le informazioni di una determinata regione in base al suo "id"   | -                                                                    |
+| `/api/comuni/provinces`        | GET    | Ritorna la lista di tutte le regioni italiane                            |`q` (querystring) - filtra per nome dopo il terzo carattere di ricerca |
+| `/api/comuni/provinces/{id}`   | GET    | Ritorna le informazioni di una determinata regione in base al suo "id"   | -                                                                    |
+| `/api/comuni/provinces/{code}` | GET    | Ritorna le informazioni di una determinata regione in base al suo "code" | -                                                                    |
+| `/api/comuni/cities`           | GET    | Ritorna la lista di tutte le città italiane                              |`q` (querystring) - filtra per nome dopo il terzo carattere di ricerca |
+| `/api/comuni/cities/{id}`      | GET    | Ritorna le informazioni di una determinata città in base al suo "id"     | -                                                                    |
+| `/api/comuni/zips`             | GET    | Ritorna la lista di tutti i CAP italiani                                 |`q` (querystring) - filtra per codice (5 caratteri numerici)           |
+| `/api/comuni/zips/{id}`        | GET    | Ritorna le informazioni di un determinato CAP in base al suo "id"        | -                                                                    |
 
 ## Installazione
 
@@ -37,6 +37,23 @@ php artisan migrate && php artisan comuni:update
 ```
 
 ## Personalizzazione
+È possibile impostare tramite la variabile `.env` `COMUNI_MIDDLEWARES` (del proprio progetto **laravel**), la lista di middleware sotto cui andranno le proprie rotte.
+
+Il separatore **deve** essere il carattere `,`.
+
+**Note ⚠️**
+Se la variabile `COMUNI_MIDDLEWARES` non è presente per impostazione predefinata verrà applicato solo il middleware `api`.
+
+**Esempio**
+``` ini
+#file .env progetto laravel 
+
+COMUNI_MIDDLEWARES=api,auth:sanctum
+```
+
+In questo esempio tutte le [rotte](#come-funziona) sopracitate verranno messe sotto i middleware `api` e `auth:sanctum` 
+
+## Esportazione
 
 È possibile esportare nel proprio progetto il file config e le migrations del package tramite:
 
